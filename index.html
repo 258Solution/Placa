@@ -1,138 +1,155 @@
-<!DOCTYPE html><html lang="pt">
+<!DOCTYPE html>
+<html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MozVendas Dashboard</title>
+  <title>Login e Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+    body { background: #f0f2f5; color: #333; }
+
+    .login-screen, .dashboard { display: none; padding: 2rem; }
+
+    .login-screen.active, .dashboard.active { display: block; }
+
+    .login-screen input, .login-screen button {
+      display: block; width: 100%; margin-bottom: 1rem; padding: 0.8rem;
+      font-size: 1rem;
     }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background-color: #333;
-      color: white;
-      padding: 10px 15px;
+
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    .menu {
-      font-size: 24px;
-      cursor: pointer;
+
+    .menu-btn, .search-btn {
+      font-size: 1.5rem; cursor: pointer;
     }
-    .search {
-      flex: 1;
-      margin-left: 10px;
-    }
-    .search input {
-      width: 100%;
-      padding: 8px;
-      border-radius: 5px;
-      border: none;
-    }
+
     .sidebar {
-      width: 200px;
-      background-color: #222;
-      color: white;
-      height: 100vh;
-      position: fixed;
-      top: 0;
-      left: 0;
-      padding-top: 50px;
-      display: none;
-      flex-direction: column;
+      position: fixed; top: 0; left: -250px; width: 250px; height: 100%;
+      background: #fff; box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      transition: left 0.3s ease;
+      padding: 2rem 1rem;
     }
-    .sidebar a {
-      color: white;
-      padding: 15px;
-      text-decoration: none;
-      display: block;
-    }
-    .sidebar a:hover {
-      background-color: #444;
-    }
-    .content {
-      margin-left: 0;
-      padding: 20px;
-    }
-    .filters {
-      margin: 20px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    .box {
-      background-color: white;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-    }
-    select {
-      padding: 10px;
+
+    .sidebar.active { left: 0; }
+
+    .sidebar ul { list-style: none; }
+    .sidebar li { margin: 1rem 0; }
+
+    .section { margin-top: 2rem; padding: 1rem; background: #fff; border-radius: 8px; }
+
+    .filter { display: flex; justify-content: space-between; margin: 1rem 0; }
+
+    .filter select {
+      padding: 0.6rem;
+      font-size: 1rem;
       border-radius: 5px;
-      width: 100%;
+      border: 1px solid #ccc;
+      width: 48%;
     }
-    .payments ul {
-      list-style: none;
-      padding-left: 20px;
+
+    .box {
+      background: #eaeaea;
+      padding: 1rem;
+      margin-top: 1rem;
+      border-radius: 8px;
     }
+
+    .payments ul { margin-top: 0.5rem; }
+
+    .payments li { margin-left: 1rem; }
+
   </style>
 </head>
-<body>  <div class="sidebar" id="sidebar">
-    <a href="#">📦 Meus Produtos</a>
-    <a href="#">💰 Minhas Vendas</a>
-    <a href="#">💳 Checkout</a>
-    <a href="#">🗃️ Relatórios</a>
-  </div>  <header>
-    <div class="menu" onclick="toggleSidebar()">☰</div>
-    <div class="search">
-      <input type="text" placeholder="Pesquisar...">
+<body>
+
+  <!-- Login Screen -->
+  <div class="login-screen active" id="loginScreen">
+    <h2>Entrar na Plataforma</h2>
+    <input type="text" id="username" placeholder="Usuário">
+    <input type="password" id="password" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+  </div>
+
+  <!-- Sidebar Menu -->
+  <div class="sidebar" id="sidebar">
+    <ul>
+      <li><strong>📊 Dashboard</strong></li>
+      <li>📦 Meus Produtos</li>
+      <li>💰 Minhas Vendas</li>
+      <li>💳 Checkout</li>
+      <li>🗃️ Relatórios</li>
+      <li><button onclick="logout()">🔓 Sair</button></li>
+    </ul>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="dashboard" id="dashboard">
+    <div class="header">
+      <span class="menu-btn" onclick="toggleSidebar()">☰</span>
+      <span class="search-btn">🔍</span>
     </div>
-  </header>  <div class="content">
-    <h2>Dashboard</h2><div class="filters">
-  <div>
-    <label>Produtos:</label>
-    <select>
-      <option value="">Selecionar produto</option>
-    </select>
+
+    <h2>Dashboard</h2>
+
+    <div class="filter">
+      <select>
+        <option>Produtos</option>
+        <option>Bolo de Chocolate</option>
+        <option>Bolo de Cenoura</option>
+      </select>
+
+      <select>
+        <option>Período</option>
+        <option>Hoje</option>
+        <option>Ontem</option>
+        <option>Últimos 7 dias</option>
+      </select>
+    </div>
+
+    <div class="section">
+      <h3>Vendas realizadas</h3>
+      <div class="box">1200 MZN</div>
+    </div>
+
+    <div class="section">
+      <h3>Quantidade de Vendas</h3>
+      <div class="box">15 vendas</div>
+    </div>
+
+    <div class="section payments">
+      <h3>Meios de Pagamento</h3>
+      <ul>
+        <li>✔ M-PESA</li>
+        <li>✔ E-MOLA</li>
+      </ul>
+    </div>
   </div>
 
-  <div>
-    <label>Período:</label>
-    <select>
-      <option value="">Selecionar período</option>
-      <option value="hoje">Hoje</option>
-      <option value="ontem">Ontem</option>
-      <option value="7dias">Últimos 7 dias</option>
-      <option value="30dias">Últimos 30 dias</option>
-      <option value="sempre">Sempre</option>
-    </select>
-  </div>
-</div>
+  <script>
+    function login() {
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
 
-<div class="box">
-  <strong>Vendas realizadas:</strong><br>
-  <span>MZN 0.00</span>
-</div>
+      if (user && pass) {
+        document.getElementById("loginScreen").classList.remove("active");
+        document.getElementById("dashboard").classList.add("active");
+      } else {
+        alert("Preencha todos os campos!");
+      }
+    }
 
-<div class="box">
-  <strong>Quantidade de vendas:</strong><br>
-  <span>0</span>
-</div>
+    function logout() {
+      document.getElementById("dashboard").classList.remove("active");
+      document.getElementById("loginScreen").classList.add("active");
+    }
 
-<div class="box payments">
-  <strong>Meios de pagamento:</strong>
-  <ul>
-    <li>- M-PESA</li>
-    <li>- E-MOLA</li>
-  </ul>
-</div>
-
-  </div>  <script>
     function toggleSidebar() {
       const sidebar = document.getElementById("sidebar");
-      sidebar.style.display = sidebar.style.display === "flex" ? "none" : "flex";
+      sidebar.classList.toggle("active");
     }
-  </script></body>
+  </script>
+</body>
 </html>
