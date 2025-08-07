@@ -1,0 +1,138 @@
+<!DOCTYPE html><html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MozVendas Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #333;
+      color: white;
+      padding: 10px 15px;
+    }
+    .menu {
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .search {
+      flex: 1;
+      margin-left: 10px;
+    }
+    .search input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+    }
+    .sidebar {
+      width: 200px;
+      background-color: #222;
+      color: white;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding-top: 50px;
+      display: none;
+      flex-direction: column;
+    }
+    .sidebar a {
+      color: white;
+      padding: 15px;
+      text-decoration: none;
+      display: block;
+    }
+    .sidebar a:hover {
+      background-color: #444;
+    }
+    .content {
+      margin-left: 0;
+      padding: 20px;
+    }
+    .filters {
+      margin: 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .box {
+      background-color: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    select {
+      padding: 10px;
+      border-radius: 5px;
+      width: 100%;
+    }
+    .payments ul {
+      list-style: none;
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>  <div class="sidebar" id="sidebar">
+    <a href="#">📦 Meus Produtos</a>
+    <a href="#">💰 Minhas Vendas</a>
+    <a href="#">💳 Checkout</a>
+    <a href="#">🗃️ Relatórios</a>
+  </div>  <header>
+    <div class="menu" onclick="toggleSidebar()">☰</div>
+    <div class="search">
+      <input type="text" placeholder="Pesquisar...">
+    </div>
+  </header>  <div class="content">
+    <h2>Dashboard</h2><div class="filters">
+  <div>
+    <label>Produtos:</label>
+    <select>
+      <option value="">Selecionar produto</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Período:</label>
+    <select>
+      <option value="">Selecionar período</option>
+      <option value="hoje">Hoje</option>
+      <option value="ontem">Ontem</option>
+      <option value="7dias">Últimos 7 dias</option>
+      <option value="30dias">Últimos 30 dias</option>
+      <option value="sempre">Sempre</option>
+    </select>
+  </div>
+</div>
+
+<div class="box">
+  <strong>Vendas realizadas:</strong><br>
+  <span>MZN 0.00</span>
+</div>
+
+<div class="box">
+  <strong>Quantidade de vendas:</strong><br>
+  <span>0</span>
+</div>
+
+<div class="box payments">
+  <strong>Meios de pagamento:</strong>
+  <ul>
+    <li>- M-PESA</li>
+    <li>- E-MOLA</li>
+  </ul>
+</div>
+
+  </div>  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      sidebar.style.display = sidebar.style.display === "flex" ? "none" : "flex";
+    }
+  </script></body>
+</html>
