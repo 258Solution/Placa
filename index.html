@@ -1,155 +1,41 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Login e Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-    body { background: #f0f2f5; color: #333; }
-
-    .login-screen, .dashboard { display: none; padding: 2rem; }
-
-    .login-screen.active, .dashboard.active { display: block; }
-
-    .login-screen input, .login-screen button {
-      display: block; width: 100%; margin-bottom: 1rem; padding: 0.8rem;
-      font-size: 1rem;
-    }
-
-    .header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1rem; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .menu-btn, .search-btn {
-      font-size: 1.5rem; cursor: pointer;
-    }
-
-    .sidebar {
-      position: fixed; top: 0; left: -250px; width: 250px; height: 100%;
-      background: #fff; box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-      transition: left 0.3s ease;
-      padding: 2rem 1rem;
-    }
-
-    .sidebar.active { left: 0; }
-
-    .sidebar ul { list-style: none; }
-    .sidebar li { margin: 1rem 0; }
-
-    .section { margin-top: 2rem; padding: 1rem; background: #fff; border-radius: 8px; }
-
-    .filter { display: flex; justify-content: space-between; margin: 1rem 0; }
-
-    .filter select {
-      padding: 0.6rem;
-      font-size: 1rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      width: 48%;
-    }
-
-    .box {
-      background: #eaeaea;
-      padding: 1rem;
-      margin-top: 1rem;
-      border-radius: 8px;
-    }
-
-    .payments ul { margin-top: 0.5rem; }
-
-    .payments li { margin-left: 1rem; }
-
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notificações Vendoo</title>
 </head>
-<body>
-
-  <!-- Login Screen -->
-  <div class="login-screen active" id="loginScreen">
-    <h2>Entrar na Plataforma</h2>
-    <input type="text" id="username" placeholder="Usuário">
-    <input type="password" id="password" placeholder="Senha">
-    <button onclick="login()">Entrar</button>
-  </div>
-
-  <!-- Sidebar Menu -->
-  <div class="sidebar" id="sidebar">
-    <ul>
-      <li><strong>📊 Dashboard</strong></li>
-      <li>📦 Meus Produtos</li>
-      <li>💰 Minhas Vendas</li>
-      <li>💳 Checkout</li>
-      <li>🗃️ Relatórios</li>
-      <li><button onclick="logout()">🔓 Sair</button></li>
-    </ul>
-  </div>
-
-  <!-- Dashboard -->
-  <div class="dashboard" id="dashboard">
-    <div class="header">
-      <span class="menu-btn" onclick="toggleSidebar()">☰</span>
-      <span class="search-btn">🔍</span>
-    </div>
-
-    <h2>Dashboard</h2>
-
-    <div class="filter">
-      <select>
-        <option>Produtos</option>
-        <option>Bolo de Chocolate</option>
-        <option>Bolo de Cenoura</option>
-      </select>
-
-      <select>
-        <option>Período</option>
-        <option>Hoje</option>
-        <option>Ontem</option>
-        <option>Últimos 7 dias</option>
-      </select>
-    </div>
-
-    <div class="section">
-      <h3>Vendas realizadas</h3>
-      <div class="box">1200 MZN</div>
-    </div>
-
-    <div class="section">
-      <h3>Quantidade de Vendas</h3>
-      <div class="box">15 vendas</div>
-    </div>
-
-    <div class="section payments">
-      <h3>Meios de Pagamento</h3>
-      <ul>
-        <li>✔ M-PESA</li>
-        <li>✔ E-MOLA</li>
-      </ul>
-    </div>
-  </div>
+<body style="font-family: Poppins, Arial; text-align:center; padding-top:60px;">
+  <h2>🔔 Notificações de Venda - Vendoo</h2>
+  <button id="permitir" style="padding:10px 20px;">Permitir Notificações</button>
+  <br><br>
+  <button id="enviar" style="padding:10px 20px;">Simular Venda Realizada</button>
 
   <script>
-    function login() {
-      const user = document.getElementById("username").value;
-      const pass = document.getElementById("password").value;
-
-      if (user && pass) {
-        document.getElementById("loginScreen").classList.remove("active");
-        document.getElementById("dashboard").classList.add("active");
-      } else {
-        alert("Preencha todos os campos!");
-      }
+    // Registrar o service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
     }
 
-    function logout() {
-      document.getElementById("dashboard").classList.remove("active");
-      document.getElementById("loginScreen").classList.add("active");
-    }
+    // Pedir permissão
+    document.getElementById('permitir').onclick = () => {
+      Notification.requestPermission().then(result => {
+        alert('Permissão: ' + result);
+      });
+    };
 
-    function toggleSidebar() {
-      const sidebar = document.getElementById("sidebar");
-      sidebar.classList.toggle("active");
-    }
+    // Enviar notificação simulada
+    document.getElementById('enviar').onclick = () => {
+      navigator.serviceWorker.ready.then(registration => {
+        registration.showNotification("💸 Venda Realizada!", {
+          body: "Recebeste uma nova venda de Bolo no Pote por 250 MZN.",
+          icon: "https://i.imgur.com/lVqv5QO.png", // ícone do "V" dentro do quadrado
+          badge: "https://i.imgur.com/lVqv5QO.png", // pequeno ícone pra Android
+          vibrate: [200, 100, 200],
+          tag: "venda-vendoo"
+        });
+      });
+    };
   </script>
 </body>
 </html>
