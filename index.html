@@ -1,41 +1,328 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notificações Vendoo</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Checkout</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<style>
+:root{
+  --accent:#0077cc;
+  --bg:#f6f8fb;
+  --card:#ffffff;
+  --danger:#d9534f;
+  --muted:#6b7280;
+}
+*{box-sizing:border-box}
+body{
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg, var(--bg), #eef3fb);
+  margin:0;padding:24px;color:#0f172a;
+  display:flex;align-items:center;justify-content:center;min-height:100vh;
+}
+.container{
+  width:100%;max-width:880px;background:var(--card);border-radius:12px;padding:20px;
+  box-shadow:0 8px 30px rgba(11,23,39,0.08);
+}
+h1{margin:0 0 8px;font-size:20px}
+p.lead{margin:0 0 18px;color:var(--muted)}
+form{display:grid;grid-template-columns:1fr 320px;gap:16px}
+.left, .right{padding:8px}
+label{display:block;font-weight:600;font-size:13px;margin-bottom:6px}
+input[type="text"], input[type="tel"], input[type="number"], select, textarea{
+  width:100%;padding:10px;border-radius:8px;border:1px solid #e6e9ef;background:#fff;
+  font-size:14px;
+}
+textarea{min-height:120px;resize:vertical}
+.small{font-size:12px;color:var(--muted);margin-top:6px}
+.row{display:flex;gap:12px}
+.btn{
+  display:inline-block;padding:14px 18px;border-radius:12px;background:var(--accent);color:#fff;
+  border:none;font-weight:600;cursor:pointer;margin-top:8px;width:100%;font-size:16px;
+}
+.btn:disabled{opacity:0.5;cursor:not-allowed;}
+.card{background:#fbfdff;border-radius:10px;padding:12px;border:1px solid #eef4ff}
+.log{max-height:180px;overflow:auto;padding:8px;background:#fafbff;border-radius:8px;border:1px dashed #e6eefc}
+.danger{color:var(--danger);font-size:13px}
+.muted{color:var(--muted);font-size:13px}
+.hidden{display:none}
+.notice{background:#fff8e6;border-left:4px solid #ffd27a;padding:8px;border-radius:6px;margin-top:10px}
+
+@media (max-width:800px){
+  form{grid-template-columns:1fr;}
+  .right{order:2}
+}
+
+/* Métodos estilo cartão */
+.method-card{
+  border:1px solid #e6e9ef;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:8px;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#fff;
+  transition:0.2s;
+}
+.method-card:hover{
+  border-color:#0077cc;
+  background:#f1f7ff;
+}
+.method-card.selected{
+  border-color:#0077cc;
+  background:#e9f3ff;
+}
+.method-info{
+  display:flex;
+  flex-direction:column;
+}
+.method-number{
+  font-size:15px;
+  color:black;
+  margin-left:10px;
+}
+
+/* Select customizado com ícone */
+.select-wrapper{
+  position:relative;
+  width:100%;
+}
+.select-wrapper select{
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  padding-right:35px; /* espaço para ícone */
+}
+.select-wrapper span{
+  position:absolute;
+  top:0; bottom:0;
+  right:12px;
+  margin:auto 0;
+  height:fit-content;
+  pointer-events:none;
+  color:#6b7280;
+}
+</style>
 </head>
-<body style="font-family: Poppins, Arial; text-align:center; padding-top:60px;">
-  <h2>🔔 Notificações de Venda - Vendoo</h2>
-  <button id="permitir" style="padding:10px 20px;">Permitir Notificações</button>
-  <br><br>
-  <button id="enviar" style="padding:10px 20px;">Simular Venda Realizada</button>
+<body>
+<div class="container">
+  <h1>Checkout</h1>
+  <p class="lead">Preencha os dados abaixo.</p>
 
-  <script>
-    // Registrar o service worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
+  <form id="checkoutForm" autocomplete="off" novalidate>
+    <div class="left">
+
+      <!-- Honeypot -->
+      <div class="hidden">
+        <label>Seu apelido (não preencher)</label>
+        <input type="text" id="hp_field" />
+      </div>
+
+      <label for="name">Nome completo </label>
+      <input id="name" type="text" required>
+
+      <label for="phone">Telefone </label>
+      <input id="phone" type="tel" placeholder="+258 8xx xxx xxx" required>
+
+      <label for="product">Produto </label>  
+      <div class="select-wrapper">
+        <select id="product" required>
+          <option value="">— selecione —</option>
+          <option value="produto-a">e-book (Livro digital)</option>
+        </select>
+        <span><i class="bi bi-caret-down-fill"></i></span>
+      </div>
+
+      <label class="muted small">Se 'Outro', descreva:</label>
+      <input id="productOther" type="text">
+
+      <label>Valor (MZN) </label>
+      <input id="amount" type="text" placeholder="ex: 150, 150.00" required>
+
+      <label style="margin-top:10px;">Método de pagamento </label>
+
+      <!-- E-Mola -->
+      <div class="method-card" data-method="emola">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <img src="imagens/emola.png" style="width:50px;height:50px;border-radius:10%;object-fit:cover;">
+          <div class="method-info">
+            <strong>E-Mola</strong>
+            <span class="method-number">870419940</span>
+          </div>
+        </div>
+        <input type="radio" name="method" value="E-Mola">
+      </div>
+
+      <!-- M-Pesa -->
+      <div class="method-card" data-method="mpesa">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <img src="imagens/mpesa.png" style="width:50px;height:50px;border-radius:10%;object-fit:cover;">
+          <div class="method-info">
+            <strong>M-Pesa</strong>
+            <span class="method-number">849029376</span>
+          </div>
+        </div>
+        <input type="radio" name="method" value="Vodacom M-Pesa">
+      </div>
+
+      <label style="margin-top:10px;">Mensagem de confirmação </label>
+      <textarea id="message" placeholder="Cole aqui a confirmação da operadora" required></textarea>
+
+      <label style="margin-top:10px;">
+        <input id="confirmCheck" type="checkbox" required> Confirmo que os dados são verdadeiros.
+      </label>
+
+      <div class="notice">
+        <strong>Atenção:</strong>
+        <ul style="margin:6px 0 0 18px;">
+          <li>Não cole prints nem links.</li>
+          <li>Apenas cole a mensagem oficial da operadora.</li>
+          <li>Números inválidos ou valores menores serão rejeitados automaticamente.</li>
+          <li>Data da mensagem deve ser a do dia.</li>
+        </ul>
+      </div>
+
+      <!-- Mensagem de erro/ok -->
+      <div id="errorDiv" class="muted" style="margin-top:6px;"></div>
+
+    </div>
+
+    <div class="right">
+      <div class="card">
+        <h3>Resumo</h3>
+        <div class="muted" id="summary">Preencha os dados para ver o resumo.</div>
+        <hr>
+        <label>Últimas submissões</label>
+        <div class="log" id="submissionsLog">— vazio —</div>
+
+        <button class="btn" type="submit">Enviar</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+const NUM_MPESA = "849029376";
+const NUM_EMOLA = "870419940";
+
+const form = document.getElementById("checkoutForm");
+const hp = document.getElementById("hp_field");
+const nameEl = document.getElementById("name");
+const phoneEl = document.getElementById("phone");
+const productEl = document.getElementById("product");
+const productOther = document.getElementById("productOther");
+const amountEl = document.getElementById("amount");
+const messageEl = document.getElementById("message");
+const summary = document.getElementById("summary");
+const submissionsLog = document.getElementById("submissionsLog");
+const submitBtn = document.querySelector(".btn[type=submit]");
+const errorDiv = document.getElementById("errorDiv");
+
+/* Funções utilitárias */
+function extrairNumero(msg){ const r=msg.match(/\b\d{9}\b/); return r?r[0]:null; }
+function extrairValor(msg){ 
+  const r=msg.match(/\b(?:transferiste|transferir|montante)\s+(\d+[.,]?\d{0,2})\s*MT/i);
+  return r?r[1].replace(",","."):null;
+}
+function extrairData(msg){
+  const r=msg.match(/\b(\d{2}\/\d{2}\/\d{2})\b/);
+  return r?r[1]:null;
+}
+
+/* Atualiza resumo em tempo real */
+function atualizarResumo(){
+  const metodoCard=document.querySelector(".method-card.selected");
+  const metodoText=metodoCard?metodoCard.dataset.method.toUpperCase():"—";
+  const valor=amountEl.value || "—";
+  const produto=productEl.value || "—";
+  summary.textContent=`Nome: ${nameEl.value||"—"}\nTelefone: ${phoneEl.value||"—"}\nProduto: ${produto}\nValor: ${valor} MT\nMétodo: ${metodoText}\nMensagem: ${messageEl.value||"—"}`;
+}
+
+/* Validação */
+function validarCampos(){
+  errorDiv.textContent="";
+  let valido = true;
+
+  if(hp.value){ errorDiv.textContent="Bot detectado."; valido=false; }
+  else if(!nameEl.value){ errorDiv.textContent="Preencha o nome."; valido=false; }
+  else if(!phoneEl.value){ errorDiv.textContent="Preencha o telefone."; valido=false; }
+  else if(!productEl.value){ errorDiv.textContent="Selecione o produto."; valido=false; }
+  else if(!amountEl.value){ errorDiv.textContent="Preencha o valor."; valido=false; }
+  else {
+    const metodoCard=document.querySelector(".method-card.selected");
+    if(!metodoCard){ errorDiv.textContent="Selecione o método de pagamento."; valido=false; }
+    else if(!messageEl.value){ errorDiv.textContent="Cole a mensagem de confirmação."; valido=false; }
+    else {
+      const metodo=metodoCard.dataset.method;
+      const numDestino=extrairNumero(messageEl.value);
+      const valorMsg=parseFloat(extrairValor(messageEl.value));
+      const valorForm=parseFloat(amountEl.value.replace(",","."))||0;
+      const dataMsg=extrairData(messageEl.value);
+      const hoje=new Date();
+      const dataHoje=`${hoje.getDate().toString().padStart(2,"0")}/${(hoje.getMonth()+1).toString().padStart(2,"0")}/${hoje.getFullYear().toString().slice(-2)}`;
+
+      if(!numDestino){ errorDiv.textContent="Número de destino não encontrado."; valido=false; }
+      else if(metodo==="mpesa" && numDestino!==NUM_MPESA){ errorDiv.textContent="Número do método M-Pesa inválido."; valido=false; }
+      else if(metodo==="emola" && numDestino!==NUM_EMOLA){ errorDiv.textContent="Número do método E-Mola inválido."; valido=false; }
+      else if(!valorMsg){ errorDiv.textContent="Não foi possível identificar o valor na mensagem."; valido=false; }
+      else if(valorMsg<valorForm){ errorDiv.textContent="Valor enviado é menor que o valor do checkout."; valido=false; }
+      else if(!dataMsg){ errorDiv.textContent="Data não encontrada na mensagem."; valido=false; }
+      else if(dataMsg!==dataHoje){ errorDiv.textContent="Data da mensagem não corresponde ao dia de hoje."; valido=false; }
     }
+  }
 
-    // Pedir permissão
-    document.getElementById('permitir').onclick = () => {
-      Notification.requestPermission().then(result => {
-        alert('Permissão: ' + result);
-      });
-    };
+  if(valido){
+    errorDiv.style.color="green";
+    errorDiv.textContent="Tudo certo! Confirmação válida.";
+    submitBtn.disabled = false;
+  } else {
+    errorDiv.style.color="red";
+    submitBtn.disabled = true;
+  }
 
-    // Enviar notificação simulada
-    document.getElementById('enviar').onclick = () => {
-      navigator.serviceWorker.ready.then(registration => {
-        registration.showNotification("💸 Venda Realizada!", {
-          body: "Recebeste uma nova venda de Bolo no Pote por 250 MZN.",
-          icon: "https://i.imgur.com/lVqv5QO.png", // ícone do "V" dentro do quadrado
-          badge: "https://i.imgur.com/lVqv5QO.png", // pequeno ícone pra Android
-          vibrate: [200, 100, 200],
-          tag: "venda-vendoo"
-        });
-      });
-    };
-  </script>
+  atualizarResumo();
+  return valido;
+}
+
+/* Eventos em tempo real */
+[nameEl, phoneEl, productEl, productOther, amountEl, messageEl].forEach(el=>{
+  el.addEventListener("input", validarCampos);
+});
+
+/* Seleção do método de pagamento */
+document.querySelectorAll(".method-card").forEach(card=>{
+  card.addEventListener("click", ()=>{
+    document.querySelectorAll(".method-card").forEach(c=>c.classList.remove("selected"));
+    card.classList.add("selected");
+    card.querySelector("input[type=radio]").checked=true;
+    validarCampos();
+  });
+});
+
+/* Inicial desabilitado */
+submitBtn.disabled = true;
+
+/* Submissão: envia para WhatsApp e limpa tela */
+form.addEventListener("submit", ev=>{
+  ev.preventDefault();
+  if(!validarCampos()) return;
+
+  const metodoCard=document.querySelector(".method-card.selected");
+  const numeroWhats = "870419940"; // seu WhatsApp
+  const mensagem = `✅ Novo Checkout\nNome: ${nameEl.value}\nTelefone: ${phoneEl.value}\nProduto: ${productEl.value}\nValor: ${amountEl.value} MT\nMétodo: ${metodoCard.dataset.method}\nMensagem: ${messageEl.value}`;
+
+  // abre WhatsApp
+  window.open(`https://wa.me/${numeroWhats}?text=${encodeURIComponent(mensagem)}`, "_blank");
+
+  // limpa tudo da tela
+  form.reset();
+  document.querySelectorAll(".method-card").forEach(c=>c.classList.remove("selected"));
+  submitBtn.disabled = true;
+  summary.textContent="Preencha os dados para ver o resumo.";
+  errorDiv.textContent="";
+});
+</script>
 </body>
 </html>
