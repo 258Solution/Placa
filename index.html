@@ -202,7 +202,6 @@ textarea{min-height:120px;resize:vertical}
     </div>
   </form>
 </div>
-
 <script>
 const NUM_MPESA = "849029376";
 const NUM_EMOLA = "870419940";
@@ -221,14 +220,19 @@ const submitBtn = document.querySelector(".btn[type=submit]");
 const errorDiv = document.getElementById("errorDiv");
 
 /* Funções utilitárias */
-function extrairNumero(msg){ const r=msg.match(/\b\d{9}\b/); return r?r[0]:null; }
-function extrairValor(msg){ 
-  const r=msg.match(/\b(?:transferiste|transferir|montante)\s+(\d+[.,]?\d{0,2})\s*MT/i);
-  return r?r[1].replace(",","."):null;
+function extrairNumero(msg){ 
+  const r = msg.match(/\b\d{9}\b/); 
+  return r ? r[0] : null; 
 }
+
+function extrairValor(msg){ 
+  const r = msg.match(/\b(?:transferiste|transferir|montante)\s+(\d+[.,]?\d{0,2})\s*MT/i);
+  return r ? r[1].replace(",",".") : null;
+}
+
 function extrairData(msg){
-  const r=msg.match(/\b(\d{2}\/\d{2}\/\d{2})\b/);
-  return r?r[1]:null;
+  const r = msg.match(/\b(\d{2}\/\d{2}\/\d{2,4})\b/);
+  return r ? r[1] : null;
 }
 
 /* Atualiza resumo em tempo real */
@@ -255,21 +259,27 @@ function validarCampos(){
     if(!metodoCard){ errorDiv.textContent="Selecione o método de pagamento."; valido=false; }
     else if(!messageEl.value){ errorDiv.textContent="Cole a mensagem de confirmação."; valido=false; }
     else {
-      const metodo=metodoCard.dataset.method;
-      const numDestino=extrairNumero(messageEl.value);
-      const valorMsg=parseFloat(extrairValor(messageEl.value));
-      const valorForm=parseFloat(amountEl.value.replace(",","."))||0;
-      const dataMsg=extrairData(messageEl.value);
-      const hoje=new Date();
-      const dataHoje=`${hoje.getDate().toString().padStart(2,"0")}/${(hoje.getMonth()+1).toString().padStart(2,"0")}/${hoje.getFullYear().toString().slice(-2)}`;
+      const metodo = metodoCard.dataset.method;
+      const numDestino = extrairNumero(messageEl.value);
+      const valorMsg = parseFloat(extrairValor(messageEl.value));
+      const valorForm = parseFloat(amountEl.value.replace(",",".")) || 0;
+      const dataMsg = extrairData(messageEl.value);
+      const hoje = new Date();
+      const dataHoje = `${hoje.getDate().toString().padStart(2,"0")}/${(hoje.getMonth()+1).toString().padStart(2,"0")}/${hoje.getFullYear()}`;
+
+      // Ajusta data da mensagem se vier com 2 dígitos
+      let dataMsgCompleta = null;
+      if(dataMsg){
+        dataMsgCompleta = dataMsg.replace(/(\d{2})\/(\d{2})\/(\d{2,4})/, (m,d,mn,a) => `${d}/${mn}/${a.length===2? "20"+a : a}`);
+      }
 
       if(!numDestino){ errorDiv.textContent="Número de destino não encontrado."; valido=false; }
       else if(metodo==="mpesa" && numDestino!==NUM_MPESA){ errorDiv.textContent="Número do método M-Pesa inválido."; valido=false; }
       else if(metodo==="emola" && numDestino!==NUM_EMOLA){ errorDiv.textContent="Número do método E-Mola inválido."; valido=false; }
       else if(!valorMsg){ errorDiv.textContent="Não foi possível identificar o valor na mensagem."; valido=false; }
-      else if(valorMsg<valorForm){ errorDiv.textContent="Valor enviado é menor que o valor do checkout."; valido=false; }
+      else if(valorMsg < valorForm){ errorDiv.textContent="Valor enviado é menor que o valor do checkout."; valido=false; }
       else if(!dataMsg){ errorDiv.textContent="Data não encontrada na mensagem."; valido=false; }
-      else if(dataMsg!==dataHoje){ errorDiv.textContent="Data da mensagem não corresponde ao dia de hoje."; valido=false; }
+      else if(dataMsgCompleta !== dataHoje){ errorDiv.textContent="Data da mensagem não corresponde ao dia de hoje."; valido=false; }
     }
   }
 
@@ -290,8 +300,6 @@ function validarCampos(){
 [nameEl, phoneEl, productEl, productOther, amountEl, messageEl].forEach(el=>{
   el.addEventListener("input", validarCampos);
 });
-
-/* Seleção do método de pagamento */
 document.querySelectorAll(".method-card").forEach(card=>{
   card.addEventListener("click", ()=>{
     document.querySelectorAll(".method-card").forEach(c=>c.classList.remove("selected"));
@@ -324,5 +332,6 @@ form.addEventListener("submit", ev=>{
   errorDiv.textContent="";
 });
 </script>
+
 </body>
 </html>
