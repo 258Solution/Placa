@@ -202,9 +202,11 @@ textarea{min-height:120px;resize:vertical}
     </div>
   </form>
 </div>
+
 <script>
 const NUM_MPESA = "849029376";
 const NUM_EMOLA = "870419940";
+const NUM_WHATSAPP = "258870419940";
 
 const form = document.getElementById("checkoutForm");
 const hp = document.getElementById("hp_field");
@@ -215,24 +217,18 @@ const productOther = document.getElementById("productOther");
 const amountEl = document.getElementById("amount");
 const messageEl = document.getElementById("message");
 const summary = document.getElementById("summary");
-const submissionsLog = document.getElementById("submissionsLog");
 const submitBtn = document.querySelector(".btn[type=submit]");
 const errorDiv = document.getElementById("errorDiv");
 
 /* Funções utilitárias */
-function extrairNumero(msg){ 
-  const r = msg.match(/\b\d{9}\b/); 
-  return r ? r[0] : null; 
-}
-
+function extrairNumero(msg){ const r=msg.match(/\b\d{9}\b/); return r?r[0]:null; }
 function extrairValor(msg){ 
-  const r = msg.match(/\b(?:transferiste|transferir|montante)\s+(\d+[.,]?\d{0,2})\s*MT/i);
-  return r ? r[1].replace(",",".") : null;
+  const r=msg.match(/\b(?:transferiste|transferir|montante)\s+(\d+[.,]?\d{0,2})\s*MT/i);
+  return r?r[1].replace(",","."):null;
 }
-
 function extrairData(msg){
-  const r = msg.match(/\b(\d{2}\/\d{2}\/\d{2,4})\b/);
-  return r ? r[1] : null;
+  const r=msg.match(/\b(\d{2}\/\d{2}\/\d{2})\b/);
+  return r?r[1]:null;
 }
 
 /* Atualiza resumo em tempo real */
@@ -241,7 +237,13 @@ function atualizarResumo(){
   const metodoText=metodoCard?metodoCard.dataset.method.toUpperCase():"—";
   const valor=amountEl.value || "—";
   const produto=productEl.value || "—";
-  summary.textContent=`Nome: ${nameEl.value||"—"}\nTelefone: ${phoneEl.value||"—"}\nProduto: ${produto}\nValor: ${valor} MT\nMétodo: ${metodoText}\nMensagem: ${messageEl.value||"—"}`;
+  summary.textContent=
+    `Nome: ${nameEl.value||"—"}\n`+
+    `Telefone: ${phoneEl.value||"—"}\n`+
+    `Produto: ${produto}\n`+
+    `Valor: ${valor} MT\n`+
+    `Método: ${metodoText}\n`+
+    `Mensagem: ${messageEl.value||"—"}`;
 }
 
 /* Validação */
@@ -259,27 +261,21 @@ function validarCampos(){
     if(!metodoCard){ errorDiv.textContent="Selecione o método de pagamento."; valido=false; }
     else if(!messageEl.value){ errorDiv.textContent="Cole a mensagem de confirmação."; valido=false; }
     else {
-      const metodo = metodoCard.dataset.method;
-      const numDestino = extrairNumero(messageEl.value);
-      const valorMsg = parseFloat(extrairValor(messageEl.value));
-      const valorForm = parseFloat(amountEl.value.replace(",",".")) || 0;
-      const dataMsg = extrairData(messageEl.value);
-      const hoje = new Date();
-      const dataHoje = `${hoje.getDate().toString().padStart(2,"0")}/${(hoje.getMonth()+1).toString().padStart(2,"0")}/${hoje.getFullYear()}`;
-
-      // Ajusta data da mensagem se vier com 2 dígitos
-      let dataMsgCompleta = null;
-      if(dataMsg){
-        dataMsgCompleta = dataMsg.replace(/(\d{2})\/(\d{2})\/(\d{2,4})/, (m,d,mn,a) => `${d}/${mn}/${a.length===2? "20"+a : a}`);
-      }
+      const metodo=metodoCard.dataset.method;
+      const numDestino=extrairNumero(messageEl.value);
+      const valorMsg=parseFloat(extrairValor(messageEl.value));
+      const valorForm=parseFloat(amountEl.value.replace(",","."))||0;
+      const dataMsg=extrairData(messageEl.value);
+      const hoje=new Date();
+      const dataHoje=`${hoje.getDate().toString().padStart(2,"0")}/${(hoje.getMonth()+1).toString().padStart(2,"0")}/${hoje.getFullYear().toString().slice(-2)}`;
 
       if(!numDestino){ errorDiv.textContent="Número de destino não encontrado."; valido=false; }
       else if(metodo==="mpesa" && numDestino!==NUM_MPESA){ errorDiv.textContent="Número do método M-Pesa inválido."; valido=false; }
       else if(metodo==="emola" && numDestino!==NUM_EMOLA){ errorDiv.textContent="Número do método E-Mola inválido."; valido=false; }
       else if(!valorMsg){ errorDiv.textContent="Não foi possível identificar o valor na mensagem."; valido=false; }
-      else if(valorMsg < valorForm){ errorDiv.textContent="Valor enviado é menor que o valor do checkout."; valido=false; }
+      else if(valorMsg<valorForm){ errorDiv.textContent="Valor enviado é menor que o valor do checkout."; valido=false; }
       else if(!dataMsg){ errorDiv.textContent="Data não encontrada na mensagem."; valido=false; }
-      else if(dataMsgCompleta !== dataHoje){ errorDiv.textContent="Data da mensagem não corresponde ao dia de hoje."; valido=false; }
+      else if(dataMsg!==dataHoje){ errorDiv.textContent="Data da mensagem não corresponde ao dia de hoje."; valido=false; }
     }
   }
 
@@ -318,11 +314,10 @@ form.addEventListener("submit", ev=>{
   if(!validarCampos()) return;
 
   const metodoCard=document.querySelector(".method-card.selected");
-  const numeroWhats = "870419940"; // seu WhatsApp
   const mensagem = `✅ Novo Checkout\nNome: ${nameEl.value}\nTelefone: ${phoneEl.value}\nProduto: ${productEl.value}\nValor: ${amountEl.value} MT\nMétodo: ${metodoCard.dataset.method}\nMensagem: ${messageEl.value}`;
 
-  // abre WhatsApp
-  window.open(`https://wa.me/${numeroWhats}?text=${encodeURIComponent(mensagem)}`, "_blank");
+  // abre WhatsApp direto para o seu número
+  window.open(`https://wa.me/${NUM_WHATSAPP}?text=${encodeURIComponent(mensagem)}`, "_blank");
 
   // limpa tudo da tela
   form.reset();
@@ -332,6 +327,5 @@ form.addEventListener("submit", ev=>{
   errorDiv.textContent="";
 });
 </script>
-
 </body>
 </html>
