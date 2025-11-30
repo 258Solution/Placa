@@ -311,7 +311,7 @@ form.addEventListener("submit", ev=>{
   if(!validarCampos()) return;
 
   const metodoCard=document.querySelector(".method-card.selected");
-  const mensagem = `✅ Novo Checkout\nNome: ${nameEl.value}\nTelefone: ${phoneEl.value}\nProduto: ${productEl.value}\nValor: ${amountEl.value} MT\nMétodo: ${metodoCard.dataset.method}\nMensagem: ${messageEl.value}`;
+  const mensagem = `✅ Novo Pedido\nNome: ${nameEl.value}\nTelefone: ${phoneEl.value}\nProduto: ${productEl.value}\nValor: ${amountEl.value} MT\nMétodo: ${metodoCard.dataset.method}\nMensagem: ${messageEl.value}`;
 
   window.open(`https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(mensagem)}`, "_blank");
 
