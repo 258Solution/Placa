@@ -206,7 +206,7 @@ textarea{min-height:120px;resize:vertical}
 <script>
 const NUM_MPESA = "849029376";
 const NUM_EMOLA = "870419940";
-const NUM_WHATSAPP = "258870419940";
+const WHATSAPP_NUM = "258870419940";
 
 const form = document.getElementById("checkoutForm");
 const hp = document.getElementById("hp_field");
@@ -217,6 +217,7 @@ const productOther = document.getElementById("productOther");
 const amountEl = document.getElementById("amount");
 const messageEl = document.getElementById("message");
 const summary = document.getElementById("summary");
+const submissionsLog = document.getElementById("submissionsLog");
 const submitBtn = document.querySelector(".btn[type=submit]");
 const errorDiv = document.getElementById("errorDiv");
 
@@ -227,7 +228,7 @@ function extrairValor(msg){
   return r?r[1].replace(",","."):null;
 }
 function extrairData(msg){
-  const r=msg.match(/\b(\d{2}\/\d{2}\/\d{2})\b/);
+  const r=msg.match(/\b(\d{2}\/\d{2}\/\d{4})\b/);
   return r?r[1]:null;
 }
 
@@ -237,13 +238,7 @@ function atualizarResumo(){
   const metodoText=metodoCard?metodoCard.dataset.method.toUpperCase():"—";
   const valor=amountEl.value || "—";
   const produto=productEl.value || "—";
-  summary.textContent=
-    `Nome: ${nameEl.value||"—"}\n`+
-    `Telefone: ${phoneEl.value||"—"}\n`+
-    `Produto: ${produto}\n`+
-    `Valor: ${valor} MT\n`+
-    `Método: ${metodoText}\n`+
-    `Mensagem: ${messageEl.value||"—"}`;
+  summary.textContent=`Nome: ${nameEl.value||"—"}\nTelefone: ${phoneEl.value||"—"}\nProduto: ${produto}\nValor: ${valor} MT\nMétodo: ${metodoText}\nMensagem: ${messageEl.value||"—"}`;
 }
 
 /* Validação */
@@ -267,7 +262,7 @@ function validarCampos(){
       const valorForm=parseFloat(amountEl.value.replace(",","."))||0;
       const dataMsg=extrairData(messageEl.value);
       const hoje=new Date();
-      const dataHoje=`${hoje.getDate().toString().padStart(2,"0")}/${(hoje.getMonth()+1).toString().padStart(2,"0")}/${hoje.getFullYear().toString().slice(-2)}`;
+      const dataHoje=`${hoje.getDate().toString().padStart(2,"0")}/${(hoje.getMonth()+1).toString().padStart(2,"0")}/${hoje.getFullYear()}`;
 
       if(!numDestino){ errorDiv.textContent="Número de destino não encontrado."; valido=false; }
       else if(metodo==="mpesa" && numDestino!==NUM_MPESA){ errorDiv.textContent="Número do método M-Pesa inválido."; valido=false; }
@@ -296,6 +291,8 @@ function validarCampos(){
 [nameEl, phoneEl, productEl, productOther, amountEl, messageEl].forEach(el=>{
   el.addEventListener("input", validarCampos);
 });
+
+/* Seleção do método de pagamento */
 document.querySelectorAll(".method-card").forEach(card=>{
   card.addEventListener("click", ()=>{
     document.querySelectorAll(".method-card").forEach(c=>c.classList.remove("selected"));
@@ -308,7 +305,7 @@ document.querySelectorAll(".method-card").forEach(card=>{
 /* Inicial desabilitado */
 submitBtn.disabled = true;
 
-/* Submissão: envia para WhatsApp e limpa tela */
+/* Submissão: abre WhatsApp e limpa tela */
 form.addEventListener("submit", ev=>{
   ev.preventDefault();
   if(!validarCampos()) return;
@@ -316,10 +313,9 @@ form.addEventListener("submit", ev=>{
   const metodoCard=document.querySelector(".method-card.selected");
   const mensagem = `✅ Novo Checkout\nNome: ${nameEl.value}\nTelefone: ${phoneEl.value}\nProduto: ${productEl.value}\nValor: ${amountEl.value} MT\nMétodo: ${metodoCard.dataset.method}\nMensagem: ${messageEl.value}`;
 
-  // abre WhatsApp direto para o seu número
-  window.open(`https://wa.me/${NUM_WHATSAPP}?text=${encodeURIComponent(mensagem)}`, "_blank");
+  window.open(`https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(mensagem)}`, "_blank");
 
-  // limpa tudo da tela
+  // Limpa tudo da tela
   form.reset();
   document.querySelectorAll(".method-card").forEach(c=>c.classList.remove("selected"));
   submitBtn.disabled = true;
