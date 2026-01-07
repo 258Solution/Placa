@@ -3,103 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Receba seu Conteúdo</title>
+  <title>Teste EmailJS</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
-    .container {
-      max-width: 500px;
-      margin: 80px auto;
+    .box {
       background: #fff;
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    h2 {
       text-align: center;
-      color: #007BFF;
-    }
-    p {
-      text-align: center;
-      color: #555;
-    }
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
     }
     button {
-      background-color: #28a745;
+      background: #28a745;
       color: #fff;
-      font-weight: bold;
       border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
       cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
     }
     button:hover {
-      background-color: #218838;
+      background: #218838;
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>Receba seu Conteúdo por Email</h2>
-  <p>Digite seu nome e email para receber dicas valiosas!</p>
-  
-  <form id="emailForm">
-    <input type="text" id="user_name" placeholder="Seu nome" required>
-    <input type="email" id="user_email" placeholder="Seu email" required>
-    <button type="submit">Receber Conteúdo</button>
-  </form>
+<div class="box">
+  <h2>Enviar Conteúdo</h2>
+  <button id="sendBtn">Enviar Email para Mim</button>
 </div>
 
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
   // Inicializa EmailJS
-  emailjs.init("RLXkiuuqrtbVht4uM"); // sua Public Key
+  emailjs.init("RLXkiuuqrtbVht4uM");
 
-  const form = document.getElementById('emailForm');
+  const button = document.getElementById('sendBtn');
 
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
+  button.addEventListener('click', function() {
+    // Conteúdo que será enviado
+    const content = `
+Aqui está o conteúdo que você solicitou:
 
-    const name = document.getElementById('user_name').value;
-    const email = document.getElementById('user_email').value;
+- Dica 1: Seja consistente!
+- Dica 2: Use automações para economizar tempo!
+- Dica 3: Personalize suas mensagens para engajar mais.
 
-    // Conteúdo em HTML que será enviado
-    const htmlContent = `
-      <div style="font-family: Arial, sans-serif; line-height:1.6; color:#333;">
-        <h2 style="color:#007BFF;">Olá ${name}!</h2>
-        <p>Aqui está o conteúdo que você solicitou:</p>
-        <ul>
-          <li><strong>Dica 1:</strong> Seja consistente!</li>
-          <li><strong>Dica 2:</strong> Use automações para economizar tempo!</li>
-          <li><strong>Dica 3:</strong> Personalize suas mensagens para engajar mais.</li>
-        </ul>
-        <p>Obrigado por se inscrever!</p>
-      </div>
+Obrigado por se inscrever!
     `;
 
-    // Envia email via EmailJS
+    // Seu email
+    const myEmail = "elvesmutombene97@gmail.com";
+
     emailjs.send("service_tlrn1en", "template_nrzndi4", {
-      user_name: name,
-      user_email: email,
-      notification_message: htmlContent // aqui vai o HTML
+      user_name: "Elves",
+      user_email: myEmail,
+      notification_message: content
     })
     .then(response => {
-      alert("Conteúdo enviado para seu email com sucesso!");
-      form.reset();
+      alert("Email enviado com sucesso para elvesmutombene97@gmail.com!");
       console.log("SUCCESS!", response.status, response.text);
     })
     .catch(error => {
-      alert("Erro ao enviar conteúdo.");
+      alert("Erro ao enviar email. Confira console.");
       console.log("FAILED...", error);
     });
   });
