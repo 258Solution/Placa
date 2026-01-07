@@ -1,230 +1,61 @@
-<!DOCTYPE html>
+      <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<title>Elves Microcrédito - Dashboard</title>
-<style>
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: Arial, sans-serif;
-  background: #0b0b0b;
-  color: #fff;
-}
-
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/* HEADER */
-.header {
-  background: #111;
-  padding: 20px;
-  text-align: center;
-  box-shadow: 0 2px 5px #25D36633;
-}
-.header h1 {
-  font-size: 26px;
-  margin: 0;
-}
-.header span {
-  color: #25D366;
-}
-
-/* CONTAINER DASHBOARD */
-.dashboard {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 15px;
-  gap: 15px;
-  overflow-y: auto;
-}
-
-/* SEÇÕES */
-.section {
-  background: #111;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 0 15px #25D36633;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* TÍTULOS */
-.section h3 {
-  color: #25D366;
-  margin: 0 0 10px 0;
-  text-align: center;
-}
-
-/* INPUTS E TEXTAREA */
-input, textarea, button {
-  width: 100%;
-  padding: 14px;
-  border-radius: 10px;
-  border: none;
-  font-size: 17px;
-  box-sizing: border-box;
-}
-
-textarea {
-  min-height: 100px;
-}
-
-input[readonly] {
-  background: #1c1c1c;
-  color: #25D366;
-  font-weight: bold;
-}
-
-/* BOTÕES */
-button {
-  background: #25D366;
-  color: #000;
-  font-weight: bold;
-  font-size: 19px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: 0.2s;
-  margin-top: 10px;
-}
-
-button:hover {
-  background: #1ed65c;
-}
-
-/* RESUMO */
-#resumo {
-  display: none;
-  background: #111;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 0 15px #25D36633;
-  text-align: left;
-  margin-top: 10px;
-}
-
-/* RESPONSIVO CELULAR */
-@media screen and (max-width: 450px) {
-  input, textarea, button {
-    font-size: 16px;
-    padding: 12px;
-  }
-  h3 {
-    font-size: 18px;
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notificação de Venda</title>
+  <style>
+    body { font-family: Arial; background:#f4f4f4; margin:0; padding:0; }
+    .container { max-width:600px; margin:50px auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+    input, button { padding:10px; margin:5px 0; width:100%; box-sizing:border-box; }
+    button { background:#28a745; color:#fff; border:none; border-radius:5px; cursor:pointer; }
+    button:hover { background:#218838; }
+  </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>ELVES <span>MICROCRÉDITO</span></h1>
+<div class="container">
+  <h2>Registrar Venda</h2>
+  <form id="saleForm">
+    <input type="text" id="client_name" placeholder="Nome do cliente" required>
+    <input type="email" id="client_email" placeholder="Email do cliente" required>
+    <input type="number" id="sale_amount" placeholder="Valor da venda (MT$)" value="120" required>
+    <button type="submit">Enviar Notificação</button>
+  </form>
 </div>
 
-<div class="dashboard">
-
-  <!-- SEÇÃO CLIENTE -->
-  <div class="section">
-    <h3>📋 Dados do Cliente</h3>
-    <input id="nome" placeholder="Nome completo">
-    <input id="telefone" placeholder="Telefone (WhatsApp)">
-    <input id="valor" type="number" placeholder="Valor solicitado" oninput="calcular()">
-    <input id="total" placeholder="Valor a devolver (30%)" readonly>
-    <input id="prazo" type="number" placeholder="Prazo (dias)">
-    <input id="localizacao" placeholder="Localização">
-  </div>
-
-  <!-- SEÇÃO PENHOR -->
-  <div class="section">
-    <h3>📦 Dados do Penhor</h3>
-    <input id="penhora" placeholder="Tipo de penhor (ex: TV, celular, mota)">
-    <textarea id="descricaoPenhor" placeholder="Descrição do penhor (marca, estado, defeitos, acessórios, etc.)"></textarea>
-  </div>
-
-  <!-- BOTÃO VER RESUMO -->
-  <button onclick="mostrarResumo()">Ver informações</button>
-
-  <!-- RESUMO -->
-  <div id="resumo"></div>
-
-  <!-- BOTÃO CONFIRMAR -->
-  <button id="confirmar" style="display:none" onclick="enviar()">Confirmar e Enviar</button>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
-emailjs.init("RLXkiuuqrtbVht4uM");
-const WHATSAPP_NUMERO = "258870419940";
+  emailjs.init("RLXkiuuqrtbVht4uM"); // Sua Public Key
 
-function calcular() {
-  let v = Number(document.getElementById("valor").value);
-  document.getElementById("total").value = v > 0 ? (v * 1.3).toFixed(2) : "";
-}
+  const form = document.getElementById('saleForm');
 
-function mostrarResumo() {
-  const resumo = document.getElementById("resumo");
-  resumo.style.display = "block";
-  document.getElementById("confirmar").style.display = "block";
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
 
-  resumo.innerHTML = `
-    <h3>🔍 Confirmação dos Dados</h3>
-    <p><b>Nome:</b> ${nome.value}</p>
-    <p><b>WhatsApp:</b> ${telefone.value}</p>
-    <p><b>Valor solicitado:</b> ${valor.value}</p>
-    <p><b>Total a devolver:</b> ${total.value}</p>
-    <p><b>Prazo:</b> ${prazo.value} dias</p>
-    <p><b>Localização:</b> ${localizacao.value}</p>
-    <p><b>Penhor:</b> ${penhora.value}</p>
-    <p><b>Descrição:</b><br>${descricaoPenhor.value}</p>
-  `;
-}
+    const name = document.getElementById('client_name').value;
+    const email = document.getElementById('client_email').value;
+    const amount = document.getElementById('sale_amount').value;
 
-function enviar() {
-  const mensagem = `
-📄 SOLICITAÇÃO DE EMPRÉSTIMO
-🏦 ELVES MICROCRÉDITO
+    // Mensagem de notificação
+    const message = `Olá ${name}, sua compra foi realizada com sucesso no valor de ${amount} MT$. Obrigado por confiar em nós!`;
 
-👤 Nome: ${nome.value}
-📞 WhatsApp: ${telefone.value}
-
-💰 Valor solicitado: ${valor.value}
-📈 Total a devolver: ${total.value}
-⏳ Prazo: ${prazo.value} dias
-
-📍 Localização: ${localizacao.value}
-
-📦 Penhor: ${penhora.value}
-📝 Descrição: ${descricaoPenhor.value}
-`;
-
-  window.open(
-    "https://wa.me/" + WHATSAPP_NUMERO + "?text=" + encodeURIComponent(mensagem),
-    "_blank"
-  );
-
-  emailjs.send("service_tlrn1en", "template_nrzndi4", {
-    nome: nome.value,
-    telefone: telefone.value,
-    valor: valor.value,
-    total: total.value,
-    prazo: prazo.value,
-    localizacao: localizacao.value,
-    penhora: penhora.value,
-    descricaoPenhor: descricaoPenhor.value
-  }).then(() => {
-    alert("Pedido enviado com sucesso!");
-  }).catch((err) => {
-    alert("Erro ao enviar email: " + err);
+    emailjs.send("service_tlrn1en", "template_nrzndi4", {
+      user_name: name,
+      user_email: email,
+      notification_message: message
+    })
+    .then(response => {
+      alert("Notificação de venda enviada com sucesso!");
+      form.reset();
+      console.log("SUCCESS!", response.status, response.text);
+    })
+    .catch(error => {
+      alert("Erro ao enviar notificação.");
+      console.log("FAILED...", error);
+    });
   });
-}
 </script>
 
 </body>
-</html>  
+</html>
