@@ -1,57 +1,105 @@
-      <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notificação de Venda</title>
+  <title>Receba seu Conteúdo</title>
   <style>
-    body { font-family: Arial; background:#f4f4f4; margin:0; padding:0; }
-    .container { max-width:600px; margin:50px auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
-    input, button { padding:10px; margin:5px 0; width:100%; box-sizing:border-box; }
-    button { background:#28a745; color:#fff; border:none; border-radius:5px; cursor:pointer; }
-    button:hover { background:#218838; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 500px;
+      margin: 80px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #007BFF;
+    }
+    p {
+      text-align: center;
+      color: #555;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #28a745;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>Registrar Venda</h2>
-  <form id="saleForm">
-    <input type="text" id="client_name" placeholder="Nome do cliente" required>
-    <input type="email" id="client_email" placeholder="Email do cliente" required>
-    <input type="number" id="sale_amount" placeholder="Valor da venda (MT$)" value="120" required>
-    <button type="submit">Enviar Notificação</button>
+  <h2>Receba seu Conteúdo por Email</h2>
+  <p>Digite seu nome e email para receber dicas valiosas!</p>
+  
+  <form id="emailForm">
+    <input type="text" id="user_name" placeholder="Seu nome" required>
+    <input type="email" id="user_email" placeholder="Seu email" required>
+    <button type="submit">Receber Conteúdo</button>
   </form>
 </div>
 
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
-  emailjs.init("RLXkiuuqrtbVht4uM"); // Sua Public Key
+  // Inicializa EmailJS
+  emailjs.init("RLXkiuuqrtbVht4uM"); // sua Public Key
 
-  const form = document.getElementById('saleForm');
+  const form = document.getElementById('emailForm');
 
-  form.addEventListener('submit', function(e){
+  form.addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const name = document.getElementById('client_name').value;
-    const email = document.getElementById('client_email').value;
-    const amount = document.getElementById('sale_amount').value;
+    const name = document.getElementById('user_name').value;
+    const email = document.getElementById('user_email').value;
 
-    // Mensagem de notificação
-    const message = `Olá ${name}, sua compra foi realizada com sucesso no valor de ${amount} MT$. Obrigado por confiar em nós!`;
+    // Conteúdo em HTML que será enviado
+    const htmlContent = `
+      <div style="font-family: Arial, sans-serif; line-height:1.6; color:#333;">
+        <h2 style="color:#007BFF;">Olá ${name}!</h2>
+        <p>Aqui está o conteúdo que você solicitou:</p>
+        <ul>
+          <li><strong>Dica 1:</strong> Seja consistente!</li>
+          <li><strong>Dica 2:</strong> Use automações para economizar tempo!</li>
+          <li><strong>Dica 3:</strong> Personalize suas mensagens para engajar mais.</li>
+        </ul>
+        <p>Obrigado por se inscrever!</p>
+      </div>
+    `;
 
+    // Envia email via EmailJS
     emailjs.send("service_tlrn1en", "template_nrzndi4", {
       user_name: name,
       user_email: email,
-      notification_message: message
+      notification_message: htmlContent // aqui vai o HTML
     })
     .then(response => {
-      alert("Notificação de venda enviada com sucesso!");
+      alert("Conteúdo enviado para seu email com sucesso!");
       form.reset();
       console.log("SUCCESS!", response.status, response.text);
     })
     .catch(error => {
-      alert("Erro ao enviar notificação.");
+      alert("Erro ao enviar conteúdo.");
       console.log("FAILED...", error);
     });
   });
