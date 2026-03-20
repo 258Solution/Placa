@@ -1,84 +1,101 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teste EmailJS</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .box {
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-    button {
-      background: #28a745;
-      color: #fff;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: bold;
-    }
-    button:hover {
-      background: #218838;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escolha seu Plano</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 60%;
+            margin: 0 auto;
+        }
+        .option {
+            margin: 15px 0;
+        }
+        .option button {
+            margin-left: 15px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background-color: blue;
+            color: white;
+            font-size: 12px;
+            border-radius: 5px;
+        }
+        .option button:hover {
+            background-color: black;
+        }
+    </style>
 </head>
 <body>
 
-<div class="box">
-  <h2>Enviar Conteúdo</h2>
-  <button id="sendBtn">Enviar Email para Mim</button>
-</div>
+    <div class="container">
+        <h1>planos hot😈😈😈</h1>
 
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-<script>
-  // Inicializa EmailJS
-  emailjs.init("RLXkiuuqrtbVht4uM");
+        <div class="option">
+            <p><strong>200mt</strong> - me deixar gozar dentro...com direito a pílulas do dia seguinte(1 vez dentro de um ano)🍆💦💦💦💦💦.</p>
+            <button onclick="sendMessage('200Mt')">Enviar para meu chefe </button>
+        </div>
 
-  const button = document.getElementById('sendBtn');
+        <div class="option">
+            <p><strong>50Mt</strong> - Chupar sem fazer gozar🍆😮.</p>
+            <button onclick="sendMessage('50Mt')">Enviar para meu chefe</button>
+        </div>
 
-  button.addEventListener('click', function() {
-    // Conteúdo que será enviado
-    const content = `
-Aqui está o conteúdo que você solicitou:
+        <div class="option">
+            <p><strong>100mt</strong> - Chupar até fazer gozar🍆😮💦.</p>
+            <button onclick="sendMessage('100Mt')">Enviar para meu chefe</button>
+        </div>
 
-- Dica 1: Seja consistente!
-- Dica 2: Use automações para economizar tempo!
-- Dica 3: Personalize suas mensagens para engajar mais.
+        <div class="option">
+            <p><strong>130MB</strong> - chupar até gozar+ bônus de chupar bolas 🍆😮💦⚽⚽.</p>
+            <button onclick="sendMessage('130MB')">Enviar para meu chefe</button>
+        </div>
+    </div>
+    
+      <div class="option">
+            <p><strong>250MB</strong> - deixar tocar com a cabecinha estando de 4 ou na posição papa e mamã🍆🍑.</p>
+            <button onclick="sendMessage('250MB')">Enviar para meu chefe</button>
+        </div>
+    </div>
 
-Obrigado por se inscrever!
-    `;
+    <script>
+        function sendMessage(plan) {
+            let message = "";
+            switch(plan) {
+                case '200mt':
+                    message = "me deixar gozar dentro...com direito a pílulas do dia seguinte(1 vez dentro de um ano)";
+                    break;
+                case '50Mt':
+                    message = "Chupar sem fazer gozar";
+                    break;
+                case '100Mt':
+                    message = "Chupar até fazer gozar";
+                    break;
+                case '130Mt':
+                    message = "chupar até gozar+ bônus de chupar bolas";
+                    break;
+                case '250':
+                    message = "deixar tocar com a cabecinha estando de 4 ou na posição papa e mamã";
+                    break;
+            }
 
-    // Seu email
-    const myEmail = "elvesmutombene97@gmail.com";
+            // Codificar a mensagem para ser inserida na URL
+            let encodedMessage = encodeURIComponent(message);
+            
+            // Substitua o número abaixo pelo seu número real do WhatsApp (com o código do país)
+            let phoneNumber = "258849029376"; // Exemplo: +55 11 99999-9999 (Brasil)
 
-    emailjs.send("service_tlrn1en", "template_nrzndi4", {
-      user_name: "Elves",
-      user_email: myEmail,
-      notification_message: content
-    })
-    .then(response => {
-      alert("Email enviado com sucesso para elvesmutombene97@gmail.com!");
-      console.log("SUCCESS!", response.status, response.text);
-    })
-    .catch(error => {
-      alert("Erro ao enviar email. Confira console.");
-      console.log("FAILED...", error);
-    });
-  });
-</script>
+            // Construir o link do WhatsApp
+            let whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+            // Abrir o link do WhatsApp
+            window.open(whatsappUrl, "_blank");
+        }
+    </script>
 
 </body>
 </html>
