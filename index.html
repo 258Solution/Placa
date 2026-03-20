@@ -3,99 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escolha seu Plano</title>
+    <title>Ofertas de Megas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: red;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
-        .container {
-            width: 60%;
-            margin: 0 auto;
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
         }
-        .option {
-            margin: 15px 0;
+        .offers {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-        .option button {
-            margin-left: 15px;
-            padding: 10px 20px;
-            cursor: pointer;
-            border: none;
-            background-color: blue;
-            color: white;
-            font-size: 12px;
-            border-radius: 5px;
-        }
-        .option button:hover {
+        .offer {
             background-color: black;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            width:250px;
+            border-radius: 15px;
+            font-size: 18px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .offer:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>planos hot😈😈😈</h1>
-
-        <div class="option">
-            <p><strong>200mt</strong> - me deixar gozar dentro...com direito a pílulas do dia seguinte(1 vez dentro de um ano)🍆💦💦💦💦💦.</p>
-            <button onclick="sendMessage('200Mt')">Enviar para meu chefe </button>
-        </div>
-
-        <div class="option">
-            <p><strong>50Mt</strong> - Chupar sem fazer gozar🍆😮.</p>
-            <button onclick="sendMessage('50Mt')">Enviar para meu chefe</button>
-        </div>
-
-        <div class="option">
-            <p><strong>100mt</strong> - Chupar até fazer gozar🍆😮💦.</p>
-            <button onclick="sendMessage('100Mt')">Enviar para meu chefe</button>
-        </div>
-
-        <div class="option">
-            <p><strong>130MB</strong> - chupar até gozar+ bônus de chupar bolas 🍆😮💦⚽⚽.</p>
-            <button onclick="sendMessage('130MB')">Enviar para meu chefe</button>
-        </div>
-    </div>
-    
-      <div class="option">
-            <p><strong>250MB</strong> - deixar tocar com a cabecinha estando de 4 ou na posição papa e mamã🍆🍑.</p>
-            <button onclick="sendMessage('250MB')">Enviar para meu chefe</button>
-        </div>
-    </div>
-
-    <script>
-        function sendMessage(plan) {
-            let message = "";
-            switch(plan) {
-                case '200mt':
-                    message = "me deixar gozar dentro...com direito a pílulas do dia seguinte(1 vez dentro de um ano)";
-                    break;
-                case '50Mt':
-                    message = "Chupar sem fazer gozar";
-                    break;
-                case '100Mt':
-                    message = "Chupar até fazer gozar";
-                    break;
-                case '130Mt':
-                    message = "chupar até gozar+ bônus de chupar bolas";
-                    break;
-                case '250':
-                    message = "deixar tocar com a cabecinha estando de 4 ou na posição papa e mamã";
-                    break;
-            }
-
-            // Codificar a mensagem para ser inserida na URL
-            let encodedMessage = encodeURIComponent(message);
+    <h1>😈😈😈</h1>
+    <div class="offers">
+        <a href="https://wa.me/258849029376?text=Gostaria%20de%20adquirir%20a%20oferta%20de%201GB%20de%20megabytes%20por%20R$20,00" target="_blank" class="offer">
+            200mt-deixar gozar dentro com direito a pílula do dia seguinte(uma vez por ano)
             
-            // Substitua o número abaixo pelo seu número real do WhatsApp (com o código do país)
-            let phoneNumber = "258849029376"; // Exemplo: +55 11 99999-9999 (Brasil)
-
-            // Construir o link do WhatsApp
-            let whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-
-            // Abrir o link do WhatsApp
-            window.open(whatsappUrl, "_blank");
-        }
-    </script>
+        </a>
+        <a href="https://wa.me/258849029376?text=Gostaria%20de%20adquirir%20a%20oferta%20de%202GB%20de%20megabytes%20por%20R$35,00" target="_blank" class="offer">
+            50mt-chupar sem fazer gozar
+        </a>
+        <a href="https://wa.me/258849029376?text=Gostaria%20de%20adquirir%20a%20oferta%20de%203GB%20de%20megabytes%20por%20R$50,00" target="_blank" class="offer">
+            100mt-chupar e fazer gozar
+        </a>
+        <a href="https://wa.me/258849029376?text=Gostaria%20de%20adquirir%20a%20oferta%20de%205GB%20de%20megabytes%20por%20R$70,00" target="_blank" class="offer">
+            130mt-chupar, fazer gozar + bônus de chpar bolas
+        </a>
+        <a href="https://wa.me/258849029376?text=Gostaria%20de%20adquirir%20a%20oferta%20de%2010GB%20de%20megabytes%20por%20R$120,00" target="_blank" class="offer">
+            250mt-deixar tocar com cabecinha na posição de 4 ou papa e mamã
+        </a>
+        </a>
+        <a href="https://wa.me/258849029376?text=Gostaria%20de%20adquirir%20a%20oferta%20de%2010GB%20de%20megabytes%20por%20R$120,00" target="_blank" class="offer">
+            free-fazer amor</div>
 
 </body>
 </html>
